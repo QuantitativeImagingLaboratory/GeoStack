@@ -1,0 +1,41 @@
+.dataset_defaults: &ds_defaults
+  dataset: "food101"
+  n_shot: 16
+
+.model_defaults: &m_defaults
+  backbone: 'ViT-B/16'
+  upper_triangle: True
+
+.training_defaults: &t_defaults
+  epochs: 100
+  loss: "contrastive"
+  optimizer: "adamw"
+  lr: 1e-4
+  weight_decay: 0.1
+  save_best: False
+
+vit16:
+  Dataset:
+    <<: *ds_defaults
+  Model:
+    <<: *m_defaults
+  Training:
+    <<: *t_defaults
+    lr: 5e-5
+    weight_decay: 5.0
+    epochs: 10
+
+vit16_geolayer:
+  Dataset:
+    <<: *ds_defaults
+  Model:
+    <<: *m_defaults
+  Training:
+    <<: *t_defaults
+    lr: 5e-5
+    weight_decay: 5.0
+    epochs: 10
+    loss: "contrastive+orthogonality"
+    lambda_ortho: 0.97
+
+
