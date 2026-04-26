@@ -2,14 +2,11 @@ import random
 import numpy as np
 import torch
 import os
-# import torch.nn as nn
 import yaml
-# import os
-# from settings import CONFIG_FOLDER, MODEL_DATA, CIL_MODEL_DATA
-# from models.StackableAdapters import StackableAdapter
-# from models.bilinearclip import BilinearCLIP
+from torch.utils.data import Dataset
 from rich.logging import RichHandler
 import logging
+import csv
 
 MDA_MODEL_DATA = "/media/pmantini/New Volume/Research/GeoStack/MDA"
 CIL_MODEL_DATA = "/media/pmantini/New Volume/Research/GeoStack/CIL"
@@ -29,16 +26,42 @@ def get_logger():
 
 logger = get_logger()
 
-def get_checkpoint_path(dataset_name, scenario="mda", geolayer=True, biclip=False):
+def write_results(data, file_name):
+    keys = data[0].keys()
+    # Check if file exists and has content
+    file_empty = not os.path.exists(file_name) or os.path.getsize(file_name) == 0
+
+    # 2. Write to the file
+    with open(file_name, 'a', newline='') as output_file:
+        dict_writer = csv.DictWriter(output_file, fieldnames=keys)
+        if file_empty:
+            dict_writer.writeheader()
+        dict_writer.writerows(data)
+
+def get_checkpoint_path(dataset_name, scenario="mda", geolayer=False, biclip=False, task=None, total_tasks=None):
     assert scenario in ["mda", "cil"], "Unknown scenario"
-    folder = MDA_MODEL_DATA if scenario == "mda" else CIL_MODEL_DATA
-    if geolayer:
-        file_name = f"{dataset_name}_geolayer.pth"
-    elif biclip:
-        file_name = f"{dataset_name}_biclip.pth"
-    else:
-        logger.error(f"Unknown setting!")
-        exit()
+    if scenario == "mda":
+        folder = MDA_MODEL_DATA
+        if geolayer:
+            file_name = f"{dataset_name}_geolayer.pth"
+        elif biclip:
+            file_name = f"{dataset_name}_biclip.pth"
+        else:
+            logger.error(f"Unknown setting!")
+            exit()
+    elif scenario == "cil":
+        assert task is not None, "task is required"
+        assert total_tasks is not None, "total_tasks is required"
+        assert task < total_tasks, f"task is out of range total_tasks={total_tasks}, task={task}"
+        assert total_tasks > 1, "total_tasks should be > 1"
+        folder = CIL_MODEL_DATA
+        if geolayer:
+            file_name = f"{total_tasks}_{dataset_name}_geolayer_task_{task}.pth"
+        elif biclip:
+            file_name = f"{total_tasks}_{dataset_name}_biclip_task_{task}.pth"
+        else:
+            logger.error(f"Unknown setting!")
+            exit()
 
     return os.path.join(folder, file_name)
 
@@ -135,3 +158,21 @@ def get_stack(stack):
         dataset_list.append(matches[0])
 
     return dataset_list
+
+class ApplyTransform(Dataset):
+    def __init__(self, subset, transform=None):
+        self.subset = subset
+        self.transform = transform
+
+    def __getitem__(self, index):
+        x, y = self.subset[index]
+
+        if hasattr(x, 'convert'):
+            x = x.convert("RGB")
+
+        if self.transform:
+            x = self.transform(x)
+        return x, y
+
+    def __len__(self):
+        return len(self.subset)

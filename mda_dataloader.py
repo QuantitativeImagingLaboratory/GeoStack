@@ -6,28 +6,11 @@ from torchvision.datasets import (
 )
 from torchvision import transforms
 from torch.utils.data import Subset, DataLoader
-from torch.utils.data import Dataset
+from utils import ApplyTransform
 from utils import *
 from pathlib import Path
 from utils import logger
 
-class ApplyTransform(Dataset):
-    def __init__(self, subset, transform=None):
-        self.subset = subset
-        self.transform = transform
-
-    def __getitem__(self, index):
-        x, y = self.subset[index]
-
-        if hasattr(x, 'convert'):
-            x = x.convert("RGB")
-
-        if self.transform:
-            x = self.transform(x)
-        return x, y
-
-    def __len__(self):
-        return len(self.subset)
 
 def get_flower_names(i):
     flower_names = [

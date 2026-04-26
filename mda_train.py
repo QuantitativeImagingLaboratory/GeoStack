@@ -12,7 +12,7 @@ from losses import convex_ortho_align
 import torch
 import clip
 from GeoStack.GeoLayer import GeoLayer
-from MDADataLoader import get_dataset
+from mda_dataloader import get_dataset
 from tqdm import tqdm
 
 device = "cuda" if torch.cuda.is_available() else "cpu"

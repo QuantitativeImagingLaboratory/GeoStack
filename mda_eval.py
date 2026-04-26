@@ -2,8 +2,9 @@ from utils import seed_everything
 from utils import logger
 from utils import get_stack
 from utils import get_checkpoint_path
-from MDADataLoader import get_dataset
+from mda_dataloader import get_dataset
 import clip
+from utils import write_results
 from tqdm import tqdm
 import argparse
 from GeoStack.GeoStack import GeoStackCLIP
@@ -63,7 +64,7 @@ def get_layer(dataset, vit_model_name="ViT-B/16", device=None, geo_layer=True, b
 
     return model
 
-def eval(stack, geolayer, biclip):
+def evaluation(stack, geolayer, biclip):
     backbone = "ViT-B/16"
     zero_shot = False
     if not geolayer and not biclip:
@@ -84,26 +85,30 @@ def eval(stack, geolayer, biclip):
         logger.info(f"Zero-shot evaluation")
         model = GeoStackCLIP().to(device)
         model.float()
-        model.eval()
+
+        results_file = f"{len(dataset_stack)}_zeroshot.csv"
     elif geolayer:
         logger.info("Evaluating based on GeoLayer Weights")
         all_geo_layers = []
         for k in dataset_stack:
             all_geo_layers.append(get_layer(k, geo_layer=geolayer, biclip=biclip))
         model = GeoStackCLIP(clip_model=backbone, geo_layers=all_geo_layers).to(device)
-        model.eval()
+
+        results_file = f"{len(dataset_stack)}_geostack.csv"
     elif biclip:
         logger.info("Evaluating based on BiCLIP Weights")
         all_geo_layers = []
         for k in dataset_stack:
             all_geo_layers.append(get_layer(k, geo_layer=geolayer, biclip=biclip))
         model = GeoStackCLIP(clip_model=backbone, geo_layers=all_geo_layers).to(device)
-        model.eval()
 
+        results_file = f"{len(dataset_stack)}_biclip.csv"
+
+    model.eval()
     accuracies = []
 
     for ind, k in enumerate(dataset_stack):
-        logger.info(f"Evaluating {k} ({ind}/{len(dataset_stack)})")
+        logger.info(f"Evaluating {k} ({ind+1}/{len(dataset_stack)})")
         logger.info("-" * 20)
         logger.info(f"Evaluating on {k}")
         accuracies.append(evaluate_dataset(model, k, device=device))
@@ -111,6 +116,24 @@ def eval(stack, geolayer, biclip):
 
         logger.info(f"Accuracy: {accuracies[-1]}")
         logger.info("-" * 20)
+
+    write_data_list = []
+    write_data = {"stack": stack,
+                  }
+    for k in range(len(dataset_stack)):
+
+        temp_write_data = write_data.copy()
+        temp_write_data.update({"dataset": dataset_stack[k],
+                                "accuracy": f"{accuracies[k]:0.2f}"})
+
+        # if lambda_o is not None:
+        #     temp_write_data.update({"lambda": lambda_o})
+
+        print(f"Accuracy on {dataset_stack[k]}: {accuracies[k]}")
+        write_data_list.append(temp_write_data)
+
+    logger.info(f"Writing results to {results_file}")
+    write_results(write_data_list, results_file)
 
 if __name__ == "__main__":
     seed_everything()
@@ -126,4 +149,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    eval(args.stack, geolayer=args.geo_layer, biclip=args.biclip)
+    evaluation(args.stack, geolayer=args.geo_layer, biclip=args.biclip)
