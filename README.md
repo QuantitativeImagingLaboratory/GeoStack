@@ -104,6 +104,39 @@ model = GeoStackCLIP(clip_model="ViT-B/16", geo_layers=[expert1, expert2]) # Fol
 logits = model(images)
 ```
 
+## 🧪 Reproducibility
+To replicate the experimental results presented in the paper, we provide automated shell scripts that handle the sequential training and evaluation phases.
+
+#### 1. Multi-Domain Adaptation (MDA)
+The MDA experiments evaluate the framework's ability to "fold" disparate domain knowledge into a single model. The script trains experts for six domains and evaluates them across the Easy, Medium, and Hard stacks defined in the manuscript.
+
+```
+chmod +x reproduce_mda.sh # Trains 6 experts and evaluates 3 stacks define in the paper
+./reproduce_mda.sh
+```
+
+#### 2. Class-Incremental Learning (CIL)
+The CIL experiments demonstrate GeoStack's resilience to catastrophic forgetting. This script partitions CIFAR-100 into 10 sequential tasks and measures the "graceful degradation" of Task-0 accuracy.
+
+```
+chmod +x reproduce_cil.sh # Trains 4 sequential tasks and measures forgetting/accuracy
+./reproduce_cil.sh
+```
+
+#### 3. Baseline Comparison
+To reproduce the BiCLIP baseline comparison (standard bilinear adapters without geometric constraints):
+
+```
+# MDA Baseline
+python mda_train.py --dataset imagenet --biclip
+python mda_train.py --dataset dtd --biclip
+python mda_eval.py -s "i->d" --biclip
+
+# CIL Baseline
+python cil_train.py  --biclip
+python cil_eval.py --biclip --forgetting
+```
+
 # 📝 Citation
 GeoStack
 ```
