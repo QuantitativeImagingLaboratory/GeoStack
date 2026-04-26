@@ -123,6 +123,7 @@ chmod +x reproduce_cil.sh # Trains 4 sequential tasks and measures forgetting/ac
 ./reproduce_cil.sh
 ```
 
+
 #### 3. Baseline Comparison
 To reproduce the BiCLIP baseline comparison (standard bilinear adapters without geometric constraints):
 
