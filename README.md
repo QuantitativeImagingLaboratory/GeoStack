@@ -138,13 +138,22 @@ python cil_train.py  --biclip
 python cil_eval.py --biclip --forgetting
 ```
 
-# 📝 Citation
-GeoStack
-```
-@inproceedings{anonymous2024geostack,
-  title={GeoStack: A Framework for Abelian Knowledge Composition in VLMs},
-  author={Anonymous},
-  booktitle={Preprint},
-  year={2024}
-}
-```
+[//]: # (# 📝 Citation)
+
+[//]: # (GeoStack)
+
+[//]: # (```)
+
+[//]: # (@inproceedings{anonymous2024geostack,)
+
+[//]: # (  title={GeoStack: A Framework for Abelian Knowledge Composition in VLMs},)
+
+[//]: # (  author={Anonymous},)
+
+[//]: # (  booktitle={Preprint},)
+
+[//]: # (  year={2024})
+
+[//]: # (})
+
+[//]: # (```)

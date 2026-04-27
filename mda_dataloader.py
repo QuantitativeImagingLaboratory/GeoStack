@@ -146,7 +146,7 @@ def get_dataset(dataset_name, preprocess, batch_size=64, include_labels=False, n
         if os.getenv("SABINE", False):
             train_root = "imagenet/partial16"
         else:
-            train_root = "/home/pmantini/Documents/Research/clip/imagenet/partial16"
+            train_root = None
 
         assert train_root is not None, f"{dataset_name} path is not defined"
 
@@ -181,7 +181,7 @@ def get_dataset(dataset_name, preprocess, batch_size=64, include_labels=False, n
         from datasets import load_from_disk
 
         # Point to the folder contianing the dataset
-        small_path = "/media/pmantini/New Volume/Research/Datasets/SUN397_fewshot_16"
+        small_path = None
         assert small_path is not None, f"{dataset_name} Dataset is not defined. Requires manual download."
 
         small_bundle = load_from_disk(small_path)
@@ -217,8 +217,8 @@ def get_dataset(dataset_name, preprocess, batch_size=64, include_labels=False, n
         prompt = "a centered photo of %s."
 
     elif dataset_name == "ucf101":
-        d_path = "/home/pmantini/Documents/Research/clip/ucf/images"
-        s_path = "/home/pmantini/Documents/Research/clip/ucf/ucfTrainTestlist/"
+        d_path = None
+        s_path = None
 
         assert d_path is not None, f"{dataset_name} path is not defined"
         assert s_path is not None, f"{dataset_name} path is not defined"

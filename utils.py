@@ -8,8 +8,8 @@ from rich.logging import RichHandler
 import logging
 import csv
 
-MDA_MODEL_DATA = "/media/pmantini/New Volume/Research/GeoStack/MDA"
-CIL_MODEL_DATA = "/media/pmantini/New Volume/Research/GeoStack/CIL"
+MDA_MODEL_DATA = "Data/MDA"
+CIL_MODEL_DATA = "Data/CIL"
 
 CONFIG_FOLDER = "configs"
 
