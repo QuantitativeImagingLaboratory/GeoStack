@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoStack: Geometric Stacking for Knowledge Composition</title>
+
+    <meta name="description" content="GeoStack: A Framework for Quasi-Abelian Knowledge Composition in VLMs.">
+    <meta name="keywords" content="Computer Vision, CLIP, Knowledge Composition, Catastrophic Forgetting, Modular Adapters">
+    <meta name="author" content="Anonymous Authors">
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          processEscapes: true
+        }
+      };
+    </script>
+
+</head>
+<body>
+
+    <header>
+        <h3>GeoStack: A Framework for Quasi-Abelian Knowledge Composition in VLMs</h3>
+                <div class="authors">
+            <p><strong>Pranav Mantini<sup>*</sup>, Shishir K. Shah<sup>+</sup></strong></p>
+            <p><sup>*</sup>University of Houston, <sup>+</sup>The University of Oklahoma</p>
+        </div>
+        <div class="links">
+            <a href="https://arxiv.org/" class="btn">Paper (arXiv)</a>
+            <a href="https://github.com/QuantitativeImagingLaboratory/GeoStack" class="btn">Code (GitHub)</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+
+        <div class="video-wrapper">
+            <img src="assets/intro.png" alt="GeoStack stacking domain experts" class="teaser-image">
+            <p class="caption">GeoStack enables independent domain experts (GeoLayers) to be composed into a unified model without catastrophic forgetting.</p>
+        </div>
+
+        <style>
+        .video-wrapper {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .teaser-image {
+            width: 100%;
+            max-width: 850px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        </style>
+
+        <section id="abstract">
+            <h4>Abstract</h4>
+            <hr>
+            <p>We address the challenge of knowledge composition in Vision-Language Models (VLMs), where accumulating expertise across multiple domains leads to catastrophic forgetting. We introduce GeoStack (Geometric Stacking), a modular framework that allows independently trained domain experts to be composed into a unified model...</p>
+             <details class="abstract-dropdown">
+                <summary class="abstract-dropdown-summary">Full Abstract</summary>
+                <div class="abstract-dropdown-content">
+                    <p>
+                        We address the challenge of knowledge composition in Vision-Language Models (VLMs), where accumulating expertise across multiple domains or tasks typically leads to catastrophic forgetting. We introduce GeoStack (Geometric Stacking), a modular framework that allows independently trained domain experts to be composed into a unified model. By imposing geometric and structural constraints on the adapter manifold, GeoStack ensures the foundational knowledge of the base model is preserved. Furthermore, we mathematically demonstrate a weight-folding property that achieves constant-time inference complexity (O(1)), regardless of the number of integrated experts. Experimental results across multi-domain adaptation and class-incremental learning show that GeoStack provides an efficient mechanism for long-term knowledge composition while significantly mitigating catastrophic forgetting.
+                    </p>
+                </div>
+            </details>
+        </section>
+
+        <section id="methodology">
+            <h4>Methodology: GeoStack</h4>
+            <hr>
+
+            <div class="method-diagram-container">
+<!--                    <img src="assets/geostack_overview.png" alt="GeoStack overview diagram showing independent experts being folded into a single weight matrix." class="method-diagram" width="80%">-->
+
+                <div class="method-caption">
+<!--                    <p><strong>Figure 1. The GeoStack Composition Framework.</strong></p>-->
+<!--                    <p>-->
+<!--                        GeoStack evolves domain-specific "GeoLayers" from the BiCLIP adapter, optimized with geometric constraints to enable knowledge composition[cite: 45, 83].-->
+<!--                    </p>-->
+
+                    <h5>Context: Zero-Shot CLIP</h5>
+                    <p>
+                        In vanilla Zero-Shot CLIP, classification is performed via the dot product between image features ($I$) and text features ($T$). <a href="https://quantitativeimaginglaboratory.github.io/BilinearCLIP/">BiCLIP</a> builds on the hypothesis that domain-specific boundaries can be recovered by applying a geometric transformation matrix $W$, optimizing the product $IWT^\top$.
+                    </p>
+
+                    <h5>Step 1: Training the GeoLayer</h5>
+                    <p>
+                        GeoLayer are BiCLIP adapters trained with two structural constraints to allow for stackability.
+
+                    </p>
+                    <ul>
+                        <li><strong>Upper Triangular Closure:</strong> Adapters are restricted to upper-triangular matrices. Since these are closed under multiplication, any composed operator $W_{total} = W_a W_b \dots W_n$ remains a valid member of the same transformation class.</li>
+                        <li><strong>Perturbation Prior:</strong> Adapters are initialized as an identity matrix $I$, treating the learned transformation as a minimal domain-specific shift: $W = I + \Delta$.</li>
+                    </ul>
+                    <p>
+                        <strong>COA Loss:</strong> Layers are optimized using the Convex Orthogonality Alignment (COA) loss, balancing domain alignment ($\mathcal{L}_{align}$) with a stackability objective ($\mathcal{L}_{ortho}$) that minimizes deviation from orthogonality.
+                    </p>
+
+                    <h5>Step 2: Creating the GeoStack</h5>
+                    <p>
+                        Once trained, independent GeoLayers are composed via sequential matrix multiplication to create a multi-expert model.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="properties">
+            <h4>Properties of GeoStack</h4>
+            <hr>
+
+            <div class="properties-grid">
+                <div class="property-card">
+                    <h5>1. Quasi-Abelian Nature (Order Independence)</h5>
+                    <p>
+                        The order in which you the GeoLayers are stack does not significantly impact the final model's performance, allowing for flexible and modular knowledge integration.
+                    </p>
+                </div>
+
+                <div class="property-card">
+                    <h5>2. Weight-Folding (Constant-Time Inference)</h5>
+                    <p>
+                        Multiple specialized experts can be mathematically collapsed into a single effective weight matrix, ensuring that the model maintains its original high-speed inference regardless of how many new domains are added.
+                    </p>
+                </div>
+
+                <div class="property-card">
+                    <h5>3. Stackability Metric</h5>
+                    <p>
+                        GeoStack introduces a formal way to measure how well different experts can be combined without interference, providing a diagnostic tool to ensure that new specialized knowledge doesn't erode the model's foundational capabilities.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="results">
+            <h4>GeoStack Performance</h4>
+            <hr>
+            <p>To showcase the real-world utility of GeoStack, we evaluate its performance on two distinct computer vision problems that traditionally struggle with knowledge integration: <strong>Multi-Domain Adaptation (MDA)</strong> and <strong>Class-Incremental Learning (CIL)</strong>.</p>
+
+<!--            <div class="accordion-item">-->
+<!--                <h5 class="accordion-header" id="headingMDA">-->
+<!--                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMDA" aria-expanded="true" aria-controls="collapseMDA">-->
+            <h4>1. Multi-Domain Adaptation (MDA)</h4>
+            <details class="mda-dropdown">
+                <summary class="mda-dropdown-summary">
+                    Expand Results
+                </summary>
+
+                <div id="collapseMDA" class="mda-dropdown-content" aria-labelledby="headingMDA">
+                    <div class="accordion-body1">
+                        <p>To evaluate the stability of GeoStack, we define three stacks of increasing domain complexity, representing the transition from general foundational knowledge to highly specialized visual content:</p>
+                        <ul>
+                            <li><strong>Easy Stack:</strong> ($i \to c \to fo \to e$) Coarse-to-fine semantic transition.</li>
+                            <li><strong>Moderate Stack:</strong> ($i \to fo \to e \to d$) Progression toward increasing geometric complexity.</li>
+                            <li><strong>Hard Stack:</strong> ($i \to e \to d \to f$) Significant departure from general images to specialized domain-specific visual content.</li>
+                        </ul>
+
+                        <div class="table-container" style="overflow-x: auto;">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Stack</th>
+                                        <th>Dataset</th>
+                                        <th>ZS</th>
+                                        <th>TA (BiCLIP)</th>
+                                        <th>TA (Geo)</th>
+                                        <th>BiCLIP [OE]</th>
+                                        <th>GeoStack [OE]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td rowspan="5"><strong>Easy Stack</strong><br><small>$i \to c \to fo \to e$</small></td>
+                                        <td>ImageNet ($i$)</td><td>66.6%</td><td>60.2%</td><td>66.2%</td><td>67.1% [0.022]</td><td><strong>69.3% [0.010]</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Caltech-101 ($c$)</td><td>90.0%</td><td>87.6%</td><td>90.0%</td><td>92.9% [0.022]</td><td><strong>93.1% [0.010]</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Food-101 ($fo$)</td><td>88.7%</td><td>85.4%</td><td>88.0%</td><td>88.2% [0.022]</td><td><strong>89.5% [0.010]</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>EuroSAT ($e$)</td><td>47.5%</td><td>31.5%</td><td>37.8%</td><td><strong>84.9% [0.022]</strong></td><td>84.1% [0.010]</td>
+                                    </tr>
+                                    <tr class="average-row">
+                                        <td><strong>Average</strong></td><td>73.2%</td><td>66.2%</td><td>70.5%</td><td>83.3% [0.022]</td><td><strong>84.0% [0.010]</strong></td>
+                                    </tr>
+
+                                    <tr class="separator-row"><td colspan="7"></td></tr>
+                                    <tr>
+                                        <td rowspan="5"><strong>Moderate Stack</strong><br><small>$i \to fo \to e \to d$</small></td>
+                                        <td>ImageNet ($i$)</td><td>66.6%</td><td>62.0%</td><td>67.9%</td><td>57.2% [0.052]</td><td><strong>65.4% [0.012]</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Food-101 ($fo$)</td><td>88.7%</td><td>85.3%</td><td>88.5%</td><td>82.6% [0.052]</td><td><strong>87.1% [0.012]</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>EuroSAT ($e$)</td><td>47.5%</td><td>83.8%</td><td>82.6%</td><td>83.2% [0.052]</td><td><strong>83.3% [0.012]</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>DTD ($d$)</td><td>42.8%</td><td>39.3%</td><td>42.4%</td><td><strong>69.7% [0.052]</strong></td><td>66.7% [0.012]</td>
+                                    </tr>
+                                    <tr class="average-row">
+                                        <td><strong>Average</strong></td><td>61.4%</td><td>67.6%</td><td>70.4%</td><td>73.2% [0.052]</td><td><strong>75.6% [0.012]</strong></td>
+                                    </tr>
+
+                                    <tr class="separator-row"><td colspan="7"></td></tr>
+                                    <tr>
+                                        <td rowspan="5"><strong>Hard Stack</strong><br><small>$i \to e \to d \to f$</small></td>
+                                        <td>ImageNet ($i$)</td><td>66.6%</td><td>49.0%</td><td>62.1%</td><td>52.6% [0.070]</td><td><strong>62.8% [0.013]</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>EuroSAT ($e$)</td><td>47.5%</td><td>82.0%</td><td>78.3%</td><td>81.7% [0.070]</td><td><strong>82.8% [0.013]</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>DTD ($d$)</td><td>42.8%</td><td>67.7%</td><td>60.0%</td><td><strong>69.5% [0.070]</strong></td><td>66.1% [0.013]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Flowers-102 ($f$)</td><td>71.0%</td><td>52.3%</td><td>60.9%</td><td><strong>86.8% [0.070]</strong></td><td>85.8% [0.013]</td>
+                                    </tr>
+                                    <tr class="average-row">
+                                        <td><strong>Average</strong></td><td>57.0%</td><td>62.8%</td><td>65.3%</td><td>72.6% [0.070]</td><td><strong>74.4% [0.013]</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="caption">
+                            <strong>Quad-Stack Multi-Domain Adaptation results.</strong> [OE] denotes Orthogonal Error. GeoStack consistently maintains higher average accuracy and significantly lower geometric error across all tiers.
+                            TA: Task Arithemetic
+                        </p>
+
+                        <section id="hexa-stack">
+                            <h4>Beyond Quad Stack: Hexa-Stack Scaling</h4>
+                            <p>
+                                To determine the upper limits of manifold stability, we evaluate a <strong>Hexa-stack composition</strong> sequence: ($i \to o \to f \to s \to e \to d$). This represents a significant accumulation of disparate domain knowledge, including fine-grained animals, flowers, vehicles, satellite imagery, and textures.
+                            </p>
+
+                            <div class="table-container" style="overflow-x: auto;">
+                                <table class="results-table hexa-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Dataset</th>
+                                            <th>Zero-Shot</th>
+                                            <th>BiCLIP (Baseline)</th>
+                                            <th>GeoStack (Ours)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>ImageNet ($i$)</td><td>66.6%</td><td>39.7%</td><td><strong>62.2%</strong></td></tr>
+                                        <tr><td>Oxford-Pet ($o$)</td><td>89.0%</td><td>72.7%</td><td><strong>86.3%</strong></td></tr>
+                                        <tr><td>Flowers-102 ($f$)</td><td>71.0%</td><td>71.0%</td><td><strong>86.8%</strong></td></tr>
+                                        <tr><td>Stanford-Cars ($s$)</td><td>66.3%</td><td><strong>65.2%</strong></td><td>60.2%</td></tr>
+                                        <tr><td>EuroSAT ($e$)</td><td>47.5%</td><td>72.4%</td><td><strong>81.7%</strong></td></tr>
+                                        <tr><td>DTD ($d$)</td><td>42.8%</td><td>62.8%</td><td><strong>63.2%</strong></td></tr>
+                                        <tr class="average-row">
+                                            <td><strong>Average Acc.</strong></td><td>63.9%</td><td>64.0%</td><td><strong>73.4%</strong></td>
+                                        </tr>
+                                        <tr class="error-row">
+                                            <td><strong>Final OE $\downarrow$</strong></td><td>---</td><td>0.1359</td><td><strong>0.0142</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="analysis-box">
+                                <p><strong>Analysis:</strong> As the stack grows to six layers, the BiCLIP baseline begins to collapse due to accumulated <strong>Orthogonality Error (OE)</strong> of 0.1359. This is most evident in <em>Oxford-Pet</em>, where BiCLIP drops below zero-shot performance.</p>
+                                <p>In contrast, GeoStack maintains an OE nearly <strong>10x lower</strong> than the baseline (0.0142), leading to a <strong>+9.4% improvement</strong> in average accuracy across all tasks. This validates GeoStack as a stable, scalable architecture for long-term knowledge composition.</p>
+                            </div>
+                        </section>
+
+                    </div>
+                </div>
+
+            </details>
+<!--            <div class="accordion-item">-->
+<!--                <h2 class="accordion-header" id="headingCIL">-->
+<!--                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCIL" aria-expanded="false" aria-controls="collapseCIL">-->
+                <h4>2. Class-Incremental Learning (CIL)</h4>
+                <details class="cil-dropdown">
+                    <summary class="cil-dropdown-summary">
+                        Expand Results
+                    </summary>
+                    <div id="collapseCIL" class="cil-dropdown-content" aria-labelledby="headingCIL">
+
+                            <p>
+                                In CIL, the objective is to learn a sequence of novel classes without sacrificing the ability to recognize previously learned ones. We partition <strong>CIFAR-100</strong> into four disjoint tasks ($T_0$ to $T_3$), each introducing 25 new classes.
+                            </p>
+
+                            <div class="cil-tables-container">
+                                <div class="table-wrapper">
+                                    <h5>Global Accuracy (All seen classes)</h5>
+                                    <table class="results-table compact">
+                                        <thead>
+                                            <tr>
+                                                <th>Task</th>
+                                                <th>Classes</th>
+                                                <th>ZS</th>
+                                                <th>BiCLIP</th>
+                                                <th>TA</th>
+                                                <th>GeoStack</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>T0</td><td>25</td><td>71.88</td><td><strong>86.20</strong></td><td>77.92</td><td>77.92</td></tr>
+                                            <tr><td>T1</td><td>50</td><td>68.44</td><td><strong>74.60</strong></td><td>69.96</td><td>74.18</td></tr>
+                                            <tr><td>T2</td><td>75</td><td>66.89</td><td>63.99</td><td>65.76</td><td><strong>70.47</strong></td></tr>
+                                            <tr><td>T3</td><td>100</td><td>68.11</td><td>60.08</td><td>61.79</td><td><strong>69.47</strong></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="table-wrapper">
+                                    <h5>Task-0 Retention (Stability)</h5>
+                                    <table class="results-table compact">
+                                        <thead>
+                                            <tr>
+                                                <th>Evaluation</th>
+                                                <th>BiCLIP</th>
+                                                <th>TA</th>
+                                                <th>GeoStack</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>After T0</td><td><strong>86.20</strong></td><td>77.92</td><td>77.92</td></tr>
+                                            <tr><td>After T1</td><td>81.88</td><td>79.48</td><td><strong>77.20</strong></td></tr>
+                                            <tr><td>After T2</td><td>76.60</td><td><strong>77.28</strong></td><td>76.92</td></tr>
+                                            <tr><td>After T3</td><td>72.04</td><td>74.00</td><td><strong>75.80</strong></td></tr>
+                                            <tr class="highlight-decay">
+                                                <td><strong>Decay (&Delta;)</strong></td>
+                                                <td style="color: #d9534f;">-14.16</td>
+                                                <td>-3.92</td>
+                                                <td style="color: #007bff;"><strong>-2.12</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <p class="caption" style="margin-top: 15px;">
+                                <strong>Table 2. CIFAR-100 Incremental Learning.</strong> While BiCLIP initially shows high plasticity, it suffers from significant "Knowledge Decay" (-14.16%). GeoStack maintains the most stable performance with only <strong>-2.12% decay</strong>.
+                            </p>
+                        </div>
+
+                </details>
+
+
+            <style>
+                .separator-row {
+                    height: 10px;
+                    background-color: #eee;
+                }
+                .average-row {
+                    background-color: #f2f8ff;
+                    font-weight: bold;
+                }
+                .results-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                    font-size: 0.9rem;
+                }
+                .results-table th, .results-table td {
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    text-align: center;
+                }
+                .results-table th {
+                    background-color: #f8f9fa;
+                }
+            </style>
+        </section>
+
+        <section id="findings">
+            <h4>Key Theoretical Properties</h4>
+            <hr>
+
+            <div class="findings-grid">
+                <div class="finding-card">
+                    <div class="icon">🔄</div>
+                    <h5>Weight Folding</h5>
+                    <p>Multi-domain expertise is achieved with <strong>zero additional latency</strong>. The composite operator folded into the original CLIP projection matrix maintains constant-time inference[cite: 77, 78].</p>
+                </div>
+
+                <div class="finding-card">
+                    <div class="icon">🛡️</div>
+                    <h5>Foundational Preservation</h5>
+                    <p>By treating experts as small geometric perturbations ($W = I + \Delta$), GeoStack ensures that the foundational knowledge of CLIP remains intact as new expertise is added[cite: 62, 68].</p>
+                </div>
+
+                <div class="finding-card">
+                    <div class="icon">📐</div>
+                    <h5>Geometric Stability</h5>
+                    <p>GeoLayers are trained with an <strong>Orthogonality Loss</strong> ($L_{ortho}$) to ensure transformations are near-isometric and minimize inter-domain interference[cite: 91, 92].</p>
+                </div>
+
+                <div class="finding-card">
+                    <div class="icon">🧩</div>
+                    <h5>Modular Growth</h5>
+                    <p>Experts are trained <strong>independently</strong> without needing access to historical data or joint-training hyperparameters, making the system highly scalable[cite: 31, 32].</p>
+                </div>
+            </div>
+        </section>
+
+<!--        <section id="citation">-->
+<!--            <h4>Citation</h4>-->
+<!--            <hr>-->
+<!--            <div class="bibtex-box">-->
+<!--                <pre id="bibtex-text">-->
+<!--@article{anonymous2026geostack,-->
+<!--  title={GeoStack: A Framework for Quasi-Abelian Knowledge Composition in VLMs},-->
+<!--  author={Anonymous Authors},-->
+<!--  journal={NeurIPS},-->
+<!--  year={2026},-->
+<!--  url={https://github.com/QuantitativeImagingLaboratory/GeoStack}-->
+<!--}-->
+<!--                </pre>-->
+<!--                <button onclick="copyBibtex()" id="copy-btn">Copy BibTeX</button>-->
+<!--            </div>-->
+<!--        </section>-->
+
+        </div>
+
+
+    <footer>
+        <p>Built for the GeoStack Research Project © 2026</p>
+    </footer>
+    </main>
+    <script>
+        function copyBibtex() {
+            const text = document.getElementById('bibtex-text').innerText;
+            navigator.clipboard.writeText(text);
+            const btn = document.getElementById('copy-btn');
+            btn.innerText = "Copied!";
+            setTimeout(() => btn.innerText = "Copy BibTeX", 2000);
+        }
+    </script>
+
+    <style>
+        .properties-grid {
+            display: grid;
+            grid-template-row: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .property-card {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 5px solid #007bff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .property-card h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #333;
+        }
+    </style>
+
+</body>
+</html>

@@ -1,0 +1,307 @@
+
+body {
+    font-family: 'Noto Sans', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+header { text-align: center; padding: 40px 0; }
+h1 { font-weight: 700; color: #222; margin-bottom: 10px; }
+.authors { margin-bottom: 20px; font-size: 1.1em; }
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    background: #222;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+.btn:hover { background: #444; }
+
+section { margin-bottom: 50px; }
+h2 { font-weight: 700; border-bottom: none; margin-bottom: 5px; }
+hr { border: 0; height: 1px; background: #ddd; margin-bottom: 20px; }
+
+.teaser-img { width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.caption { text-align: center; font-style: italic; margin-top: 10px; color: #666; }
+
+/* Table Styling */
+.table-container { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+th, td { padding: 12px; border: 1px solid #eee; text-align: center; }
+th { background: #f4f4f4; }
+tr:hover { background: #f9f9f9; }
+
+/* BibTeX Box */
+.bibtex-box {
+    background: #f1f1f1;
+    padding: 20px;
+    border-radius: 5px;
+    position: relative;
+    font-size: 0.9em;
+}
+#copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* METHODOLOGY SECTION STYLING */
+.method-diagram-container {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the image and caption */
+}
+
+.method-diagram {
+    width: 100%;
+    max-width: 900px; /* Adjust based on original image size */
+    height: auto;
+    border: 1px solid #ddd; /* Subtle border for clean definition */
+    border-radius: 8px; /* Soften the edges */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05); /* Soft shadow */
+    background-color: white; /* Ensure consistent background color */
+    padding: 10px; /* Slight padding inside the shadow */
+}
+
+.method-caption {
+    width: 90%;
+    max-width: 800px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fcfcfc; /* Very subtle background shift for the caption box */
+    border-left: 4px solid #222; /* Add a dark accent bar */
+    font-size: 0.95em;
+    color: #555;
+    line-height: 1.7;
+    text-align: justify; /* Academic text often uses justification */
+}
+
+/* Ensure the subscript rendering is clean */
+sub {
+    font-size: 0.8em;
+    vertical-align: sub;
+}
+
+.plots-grid {
+    display: grid;
+    /* Changed to 3 columns for better plot readability */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.plot-item {
+    background: white;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* Feature the Average plot to be prominent */
+.plot-item.featured {
+    grid-column: span 2; /* Takes up 2 out of the 3 columns */
+    border: 2px solid #222; /* Adds a visual emphasis */
+}
+
+.plot-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+}
+
+/* Ensure mobile users still see a usable layout */
+@media (max-width: 992px) {
+    .plots-grid { grid-template-columns: repeat(2, 1fr); }
+    .plot-item.featured { grid-column: span 2; }
+}
+
+@media (max-width: 600px) {
+    .plots-grid { grid-template-columns: 1fr; }
+    .plot-item.featured { grid-column: span 1; }
+}
+
+.selector-container {
+    text-align: center;
+    margin: 20px 0 40px 0;
+}
+
+#dataset-select {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background-color: white;
+}
+
+.comparison-display {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap; /* Wraps on mobile */
+}
+
+.plot-box {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+    text-align: center;
+    background: #fdfdfd;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+}
+
+.plot-box h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #444;
+}
+
+.plot-box img {
+    width: 100%;
+    height: auto;
+    transition: opacity 0.3s ease; /* Matches the JS fade effect */
+}
+
+.plot-box.highlight {
+    border: 2px solid #28a745; /* Green border to emphasize BiCLIP results */
+    background-color: #f8fff9;
+}
+
+.ortho-container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    background: #fcfcfc;
+    padding: 30px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.ortho-stats {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stat-item {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    text-align: center;
+    border-top: 4px solid #007bff;
+}
+
+.stat-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #222;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ortho-explanation {
+    flex: 2;
+}
+
+.ortho-explanation ul {
+    padding-left: 20px;
+    margin-top: 15px;
+}
+
+.ortho-explanation li {
+    margin-bottom: 12px;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+    .ortho-container { flex-direction: column; }
+}
+
+/* Findings Section Layout */
+.findings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin: 40px 0;
+}
+
+.finding-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.finding-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border-color: #007bff;
+}
+
+.finding-card .icon {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.finding-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.15rem;
+    color: #111;
+}
+
+.finding-card p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.ortho-footer {
+    background: #f8f9fa;
+    padding: 15px 25px;
+    border-radius: 8px;
+    border-left: 5px solid #28a745;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .findings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+footer {
+    text-align: center;
+    padding: 40px 0;
+}
