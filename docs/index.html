@@ -37,7 +37,7 @@
             <p><sup>*</sup>University of Houston, <sup>+</sup>The University of Oklahoma</p>
         </div>
         <div class="links">
-            <a href="https://arxiv.org/" class="btn">Paper (arXiv)</a>
+            <a href="https://arxiv.org/abs/2605.06477" class="btn">Paper (arXiv)</a>
             <a href="https://github.com/QuantitativeImagingLaboratory/GeoStack" class="btn">Code (GitHub)</a>
         </div>
     </header>
@@ -390,45 +390,47 @@
                 <div class="finding-card">
                     <div class="icon">🔄</div>
                     <h5>Weight Folding</h5>
-                    <p>Multi-domain expertise is achieved with <strong>zero additional latency</strong>. The composite operator folded into the original CLIP projection matrix maintains constant-time inference[cite: 77, 78].</p>
+                    <p>Multi-domain expertise is achieved with <strong>zero additional latency</strong>. The composite operator folded into the original CLIP projection matrix maintains constant-time inference.</p>
                 </div>
 
                 <div class="finding-card">
                     <div class="icon">🛡️</div>
                     <h5>Foundational Preservation</h5>
-                    <p>By treating experts as small geometric perturbations ($W = I + \Delta$), GeoStack ensures that the foundational knowledge of CLIP remains intact as new expertise is added[cite: 62, 68].</p>
+                    <p>By treating experts as small geometric perturbations ($W = I + \Delta$), GeoStack ensures that the foundational knowledge of CLIP remains intact as new expertise is added.</p>
                 </div>
 
                 <div class="finding-card">
                     <div class="icon">📐</div>
                     <h5>Geometric Stability</h5>
-                    <p>GeoLayers are trained with an <strong>Orthogonality Loss</strong> ($L_{ortho}$) to ensure transformations are near-isometric and minimize inter-domain interference[cite: 91, 92].</p>
+                    <p>GeoLayers are trained with an <strong>Orthogonality Loss</strong> ($L_{ortho}$) to ensure transformations are near-isometric and minimize inter-domain interference.</p>
                 </div>
 
                 <div class="finding-card">
                     <div class="icon">🧩</div>
                     <h5>Modular Growth</h5>
-                    <p>Experts are trained <strong>independently</strong> without needing access to historical data or joint-training hyperparameters, making the system highly scalable[cite: 31, 32].</p>
+                    <p>Experts are trained <strong>independently</strong> without needing access to historical data or joint-training hyperparameters, making the system highly scalable.</p>
                 </div>
             </div>
         </section>
 
-<!--        <section id="citation">-->
-<!--            <h4>Citation</h4>-->
-<!--            <hr>-->
-<!--            <div class="bibtex-box">-->
-<!--                <pre id="bibtex-text">-->
-<!--@article{anonymous2026geostack,-->
-<!--  title={GeoStack: A Framework for Quasi-Abelian Knowledge Composition in VLMs},-->
-<!--  author={Anonymous Authors},-->
-<!--  journal={NeurIPS},-->
-<!--  year={2026},-->
-<!--  url={https://github.com/QuantitativeImagingLaboratory/GeoStack}-->
-<!--}-->
-<!--                </pre>-->
-<!--                <button onclick="copyBibtex()" id="copy-btn">Copy BibTeX</button>-->
-<!--            </div>-->
-<!--        </section>-->
+        <section id="citation">
+            <h4>Citation</h4>
+            <hr>
+            <div class="bibtex-box">
+                <pre id="bibtex-text">
+                @misc{mantini2026geostackframeworkquasiabelianknowledge,
+                      title={GeoStack: A Framework for Quasi-Abelian Knowledge Composition in VLMs},
+                      author={Pranav Mantini and Shishir K. Shah},
+                      year={2026},
+                      eprint={2605.06477},
+                      archivePrefix={arXiv},
+                      primaryClass={cs.CV},
+                      url={https://arxiv.org/abs/2605.06477},
+                }
+                </pre>
+                <button onclick="copyBibtex()" id="copy-btn">Copy BibTeX</button>
+            </div>
+        </section>
 
         </div>
 
